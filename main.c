@@ -1,29 +1,24 @@
 #include <stdio.h>
+#include <string.h>
 
 int main() {
-    int tamanho;
+    char string[100];
+    int vogais = 0;
 
-    printf("Digite o tamanho do array: ");
-    scanf("%d", &tamanho);
+    printf("Digite uma string: ");
+    fgets(string, sizeof(string), stdin);
 
-    // Declaração do array com o tamanho informado
-    int array[tamanho];
-
-    // Solicita ao usuário inserir os elementos do array
-    printf("Digite os elementos do array:\n");
-    for (int i = 0; i < tamanho; i++) {
-        printf("Elemento %d: ", i + 1);
-        scanf("%d", &array[i]);
+    // Percorre a string para contar as vogais
+    for (int i = 0; string[i] != '\0'; i++) {
+        // Verifica se o caractere atual é uma vogal (maiúscula ou minúscula)
+        if (string[i] == 'a' || string[i] == 'A' || string[i] == 'e' || string[i] == 'E' ||
+            string[i] == 'i' || string[i] == 'I' || string[i] == 'o' || string[i] == 'O' ||
+            string[i] == 'u' || string[i] == 'U') {
+            vogais++;
+        }
     }
 
-    // Calcula a soma dos elementos do array
-    int soma = 0;
-    for (int i = 0; i < tamanho; i++) {
-        soma += array[i];
-    }
-
-    // Imprime a soma dos elementos
-    printf("A soma dos elementos do array é: %d\n", soma);
+    printf("O número de vogais na string é: %d\n", vogais);
 
     return 0;
 }
