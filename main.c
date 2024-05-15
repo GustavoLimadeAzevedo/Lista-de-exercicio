@@ -1,66 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-// Definindo a estrutura do registro de funcionário
-struct Funcionario {
-    char nome[50];
-    int idade;
-    float salario;
-};
+// Função para inverter um array utilizando ponteiros
+int* inverterArray(int *array, int tamanho) {
+    int *arrayInvertido = (int*)malloc(tamanho * sizeof(int));
 
-// Função de comparação para ordenar por idade
-int compararPorIdade(const void *a, const void *b) {
-    const struct Funcionario *funcionarioA = (const struct Funcionario *)a;
-    const struct Funcionario *funcionarioB = (const struct Funcionario *)b;
-
-    return funcionarioA->idade - funcionarioB->idade;
-}
-
-// Função para ler os dados de um funcionário
-void lerFuncionario(struct Funcionario *funcionario) {
-    printf("Digite o nome do funcionario: ");
-    scanf("%s", funcionario->nome);
-
-    printf("Digite a idade do funcionario: ");
-    scanf("%d", &funcionario->idade);
-
-    printf("Digite o salario do funcionario: ");
-    scanf("%f", &funcionario->salario);
-}
-
-// Função para imprimir o array de funcionários
-void imprimirFuncionarios(struct Funcionario *funcionarios, int numFuncionarios) {
-    printf("\n=== Lista de Funcionarios Ordenados por Idade ===\n");
-    for (int i = 0; i < numFuncionarios; i++) {
-        printf("Nome: %s, Idade: %d, Salario: %.2f\n", funcionarios[i].nome, funcionarios[i].idade, funcionarios[i].salario);
+    if (arrayInvertido == NULL) {
+        printf("Erro ao alocar memoria.\n");
+        exit(1);
     }
-    printf("==============================================\n");
+
+    int *ptrOriginal = array + tamanho - 1;
+    int *ptrInvertido = arrayInvertido;
+
+    while (ptrOriginal >= array) {
+        *ptrInvertido = *ptrOriginal;
+        ptrOriginal--;
+        ptrInvertido++;
+    }
+
+    return arrayInvertido;
+}
+
+// Função para imprimir um array
+void imprimirArray(int *array, int tamanho) {
+    printf("[ ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("]\n");
 }
 
 int main() {
-    int numFuncionarios;
+    int tamanho;
+    printf("Digite o tamanho do array: ");
+    scanf("%d", &tamanho);
 
-    printf("Digite o numero de funcionarios: ");
-    scanf("%d", &numFuncionarios);
+    int *array = (int*)malloc(tamanho * sizeof(int));
 
-    // Aloca espaço para o array de funcionários
-    struct Funcionario *funcionarios = (struct Funcionario *)malloc(numFuncionarios * sizeof(struct Funcionario));
-
-    // Lendo os dados dos funcionários
-    for (int i = 0; i < numFuncionarios; i++) {
-        printf("\nFuncionario %d:\n", i + 1);
-        lerFuncionario(&funcionarios[i]);
+    if (array == NULL) {
+        printf("Erro ao alocar memoria.\n");
+        return 1;
     }
 
-    // Ordenando o array de funcionários por idade
-    qsort(funcionarios, numFuncionarios, sizeof(struct Funcionario), compararPorIdade);
+    printf("Digite os elementos do array:\n");
+    for (int i = 0; i < tamanho; i++) {
+        scanf("%d", &array[i]);
+    }
 
-    // Imprimindo os funcionários ordenados
-    imprimirFuncionarios(funcionarios, numFuncionarios);
+    printf("Array original: ");
+    imprimirArray(array, tamanho);
+
+    int *arrayInvertido = inverterArray(array, tamanho);
+
+    printf("Array invertido: ");
+    imprimirArray(arrayInvertido, tamanho);
 
     // Liberando a memória alocada
-    free(funcionarios);
+    free(array);
+    free(arrayInvertido);
 
     return 0;
 }
