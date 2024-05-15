@@ -9,97 +9,58 @@ struct Funcionario {
     float salario;
 };
 
-// Função para adicionar um novo registro
-void adicionarRegistro(FILE *arquivo) {
-    struct Funcionario funcionario;
+// Função de comparação para ordenar por idade
+int compararPorIdade(const void *a, const void *b) {
+    const struct Funcionario *funcionarioA = (const struct Funcionario *)a;
+    const struct Funcionario *funcionarioB = (const struct Funcionario *)b;
 
+    return funcionarioA->idade - funcionarioB->idade;
+}
+
+// Função para ler os dados de um funcionário
+void lerFuncionario(struct Funcionario *funcionario) {
     printf("Digite o nome do funcionario: ");
-    scanf("%s", funcionario.nome);
+    scanf("%s", funcionario->nome);
 
     printf("Digite a idade do funcionario: ");
-    scanf("%d", &funcionario.idade);
+    scanf("%d", &funcionario->idade);
 
     printf("Digite o salario do funcionario: ");
-    scanf("%f", &funcionario.salario);
-
-    fwrite(&funcionario, sizeof(struct Funcionario), 1, arquivo);
+    scanf("%f", &funcionario->salario);
 }
 
-// Função para listar todos os registros
-void listarRegistros(FILE *arquivo) {
-    struct Funcionario funcionario;
-
-    rewind(arquivo); // Voltando para o início do arquivo
-
-    printf("\n=== Lista de Funcionarios ===\n");
-    while (fread(&funcionario, sizeof(struct Funcionario), 1, arquivo) == 1) {
-        printf("Nome: %s, Idade: %d, Salario: %.2f\n", funcionario.nome, funcionario.idade, funcionario.salario);
+// Função para imprimir o array de funcionários
+void imprimirFuncionarios(struct Funcionario *funcionarios, int numFuncionarios) {
+    printf("\n=== Lista de Funcionarios Ordenados por Idade ===\n");
+    for (int i = 0; i < numFuncionarios; i++) {
+        printf("Nome: %s, Idade: %d, Salario: %.2f\n", funcionarios[i].nome, funcionarios[i].idade, funcionarios[i].salario);
     }
-    printf("=============================\n");
-}
-
-// Função para buscar por registros específicos pelo nome
-void buscarPorNome(FILE *arquivo) {
-    struct Funcionario funcionario;
-    char nomeBusca[50];
-    int encontrado = 0;
-
-    printf("Digite o nome a ser buscado: ");
-    scanf("%s", nomeBusca);
-
-    rewind(arquivo); // Voltando para o início do arquivo
-
-    while (fread(&funcionario, sizeof(struct Funcionario), 1, arquivo) == 1) {
-        if (strcmp(funcionario.nome, nomeBusca) == 0) {
-            printf("Nome: %s, Idade: %d, Salario: %.2f\n", funcionario.nome, funcionario.idade, funcionario.salario);
-            encontrado = 1;
-        }
-    }
-
-    if (!encontrado) {
-        printf("Funcionario com o nome '%s' nao encontrado.\n", nomeBusca);
-    }
+    printf("==============================================\n");
 }
 
 int main() {
-    FILE *arquivo;
-    int opcao;
+    int numFuncionarios;
 
-    arquivo = fopen("funcionarios.bin", "ab+");
+    printf("Digite o numero de funcionarios: ");
+    scanf("%d", &numFuncionarios);
 
-    if (arquivo == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        return 1;
+    // Aloca espaço para o array de funcionários
+    struct Funcionario *funcionarios = (struct Funcionario *)malloc(numFuncionarios * sizeof(struct Funcionario));
+
+    // Lendo os dados dos funcionários
+    for (int i = 0; i < numFuncionarios; i++) {
+        printf("\nFuncionario %d:\n", i + 1);
+        lerFuncionario(&funcionarios[i]);
     }
 
-    do {
-        printf("\n=== Menu ===\n");
-        printf("1. Adicionar registro\n");
-        printf("2. Listar registros\n");
-        printf("3. Buscar por nome\n");
-        printf("4. Sair\n");
-        printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
+    // Ordenando o array de funcionários por idade
+    qsort(funcionarios, numFuncionarios, sizeof(struct Funcionario), compararPorIdade);
 
-        switch(opcao) {
-            case 1:
-                adicionarRegistro(arquivo);
-                break;
-            case 2:
-                listarRegistros(arquivo);
-                break;
-            case 3:
-                buscarPorNome(arquivo);
-                break;
-            case 4:
-                printf("Saindo...\n");
-                break;
-            default:
-                printf("Opcao invalida. Tente novamente.\n");
-        }
-    } while(opcao != 4);
+    // Imprimindo os funcionários ordenados
+    imprimirFuncionarios(funcionarios, numFuncionarios);
 
-    fclose(arquivo);
+    // Liberando a memória alocada
+    free(funcionarios);
 
     return 0;
 }
