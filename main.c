@@ -1,72 +1,33 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <time.h>
 
-// Função para comparar dois inteiros (usada no qsort)
-int compare(const void *a, const void *b) {
-    return (*(int*)a - *(int*)b);
-}
-
-// Função para calcular a média
-double calcular_media(int arr[], int n) {
-    int soma = 0;
-    for (int i = 0; i < n; i++) {
-        soma += arr[i];
+// Função para simular um trecho de código que leva tempo para executar
+void trecho_de_codigo() {
+    // Simulação de trabalho: um loop que faz algo
+    for (volatile int i = 0; i < 100000000; i++) {
+        // Este loop não faz nada útil, apenas gasta tempo
     }
-    return (double)soma / n;
-}
-
-// Função para calcular a mediana
-double calcular_mediana(int arr[], int n) {
-    qsort(arr, n, sizeof(int), compare);
-    if (n % 2 == 0) {
-        return (arr[n / 2 - 1] + arr[n / 2]) / 2.0;
-    } else {
-        return arr[n / 2];
-    }
-}
-
-// Função para calcular a moda
-int calcular_moda(int arr[], int n) {
-    int max_count = 0, moda = arr[0], count = 1;
-
-    for (int i = 1; i < n; i++) {
-        if (arr[i] == arr[i - 1]) {
-            count++;
-        } else {
-            if (count > max_count) {
-                max_count = count;
-                moda = arr[i - 1];
-            }
-            count = 1;
-        }
-    }
-
-    if (count > max_count) {
-        moda = arr[n - 1];
-    }
-
-    return moda;
 }
 
 int main() {
-    int n;
+    // Variáveis para armazenar o tempo de início e fim
+    clock_t inicio, fim;
+    double tempo_gasto;
 
-    printf("Digite o tamanho do array: ");
-    scanf("%d", &n);
+    // Captura o tempo de início
+    inicio = clock();
 
-    int arr[n];
-    printf("Digite os elementos do array:\n");
-    for (int i = 0; i < n; i++) {
-        scanf("%d", &arr[i]);
-    }
+    // Trecho de código cujo tempo de execução será medido
+    trecho_de_codigo();
 
-    double media = calcular_media(arr, n);
-    double mediana = calcular_mediana(arr, n);
-    int moda = calcular_moda(arr, n);
+    // Captura o tempo de fim
+    fim = clock();
 
-    printf("Media: %.2f\n", media);
-    printf("Mediana: %.2f\n", mediana);
-    printf("Moda: %d\n", moda);
+    // Calcula o tempo gasto em segundos
+    tempo_gasto = ((double) (fim - inicio)) / CLOCKS_PER_SEC;
+
+    // Imprime o tempo gasto
+    printf("O trecho de código levou %f segundos para executar.\n", tempo_gasto);
 
     return 0;
 }
